@@ -9,31 +9,41 @@
         text-align: center;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    a .link {
+        color: black;
+        text-decoration: none;
+    }
+    a.link:hover {
+        color: red;
+    }
 </style>
 {% endblock %}
 {% block content %}
 <div class="row justify-content-center mt-4">
     <div class="col-md-4 mb-3">
-        <div class="option-block">
-            <img width="96" height="96" src="https://img.icons8.com/color/96/youtube-play.png" alt="youtube-play" />
-            <p class="font-weight-bold">Download Youtube videos in high resolution.</p>
-            <a href="/download" class="btn btn-danger">Select</a>
-        </div>
+        <a class="link" href="/download" style="color: black;text-decoration:none;">
+            <div class="option-block">
+                <img width="96" height="96" src="https://img.icons8.com/color/96/youtube-play.png" alt="youtube-play" />
+                <p class="font-weight-bold">Download Youtube videos in high resolution.</p>
+            </div>
+        </a>
     </div>
     <div class="col-md-4 mb-3">
-        <div class="option-block">
-            <img width="96" height="96" src="https://img.icons8.com/color/96/instagram-new--v1.png"
-                alt="instagram-new--v1" />
-            <p class="font-weight-bold">Download Instagram videos in high resolution.</p>
-            <a href="#" class="btn btn-primary" disabled>Select</a>
-        </div>
+        <a href="#" style="color: black;text-decoration:none;">
+            <div class="option-block">
+                <img width="96" height="96" src="https://img.icons8.com/color/96/instagram-new--v1.png"
+                    alt="instagram-new--v1" />
+                <p class="font-weight-bold">Download Instagram videos in high resolution.</p>
+            </div>
+        </a>
     </div>
     <div class="col-md-4 mb-2">
-        <div class="option-block">
-            <img width="96" height="96" src="https://img.icons8.com/color/96/facebook-new.png" alt="facebook-new" />
-            <p class="font-weight-bold">Download Facebook videos in high resolution.</p>
-            <a href="#" class="btn btn-primary" disabled>Select</a>
-        </div>
+        <a href="#" style="color: black;text-decoration:none;">
+            <div class="option-block">
+                <img width="96" height="96" src="https://img.icons8.com/color/96/facebook-new.png" alt="facebook-new" />
+                <p class="font-weight-bold">Download Facebook videos in high resolution.</p>
+            </div>
+        </a>
     </div>
 </div>
 {% endblock %}
