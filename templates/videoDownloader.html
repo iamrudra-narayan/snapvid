@@ -18,10 +18,12 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <form action="/download" method="post">
+                    <form action="/download" method="post" id="downloadForm">
                         <div class="mb-3">
                             <label for="video_url" class="form-label">Enter YouTube Video URL:</label>
                             <input type="text" class="form-control" id="video_url" name="video_url" required>
+                            <small class="text-danger" id="errorText" style="display: none;">Please enter a valid
+                                YouTube video URL.</small>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Download</button>
                     </form>
@@ -30,4 +32,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    // JavaScript code
+    document.getElementById("downloadForm").addEventListener("submit", function (event) {
+        var videoUrl = document.getElementById("video_url").value;
+        if (!isValidYouTubeUrl(videoUrl)) {
+            event.preventDefault();
+            document.getElementById("errorText").style.display = "block";
+        } else {
+            document.getElementById("errorText").style.display = "none";
+        }
+    });
+
+    function isValidYouTubeUrl(url) {
+        var youtubeRegex = /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})(?:\S+)?$/;
+        return youtubeRegex.test(url);
+    }
+</script>
 {% endblock %}

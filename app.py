@@ -58,6 +58,6 @@ def privacy():
     return render_template('privacy.html')        
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
     schedule_thread = threading.Thread(target=schedule_cleanup)
     schedule_thread.start()
