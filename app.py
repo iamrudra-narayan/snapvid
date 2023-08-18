@@ -16,26 +16,33 @@ def index():
 def download():
     if request.method == 'POST':
             video_url = request.form.get('video_url')
+            resolution = request.form.get('resolution')
+
             new_directory = 'downloads'
             os.makedirs(new_directory, exist_ok=True)
 
             yt = YouTube(video_url)
-            video_stream = yt.streams.get_highest_resolution()
+            video_stream = yt.streams.filter(res=resolution).first()
 
             # Clean up the video title using regex
             cleaned_title = re.sub(r'[^\w\s-]', '', yt.title)
             cleaned_title = re.sub(r'\s+', '-', cleaned_title)
+            
+            if video_stream:
+                new_directory = 'downloads'
+                filename = cleaned_title + '.mp4'
+                video_stream.download(output_path=new_directory, filename=filename)
 
-            filename = cleaned_title + '.mp4'
-            video_stream.download(output_path=new_directory, filename=filename)
+                # Send the file as an attachment
+                response = send_file(os.path.join(new_directory, filename), as_attachment=True)
 
-            # Send the file as an attachment
-            response = send_file(os.path.join(new_directory, filename), as_attachment=True)
+                # Schedule the deletion of the downloaded video after 10 minutes
+                schedule.every(10).minutes.do(delete_video, filename)
 
-            # Schedule the deletion of the downloaded video after 10 minutes
-            schedule.every(10).minutes.do(delete_video, filename)
+                return response
+            else:
+                return "Selected resolution not available for this video."
 
-            return response
     return render_template('videoDownloader.html')
 
 def delete_video(filename):
@@ -58,6 +65,6 @@ def privacy():
     return render_template('privacy.html')        
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
     schedule_thread = threading.Thread(target=schedule_cleanup)
     schedule_thread.start()

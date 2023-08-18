@@ -21,7 +21,18 @@
                     <form action="/download" method="post" id="downloadForm">
                         <div class="mb-3">
                             <label for="video_url" class="form-label">Enter YouTube Video URL:</label>
-                            <input type="text" class="form-control" id="video_url" name="video_url" required>
+                            <input type="text" class="form-control mb-4" id="video_url" name="video_url" required>
+                            <div class="mb-3">
+                                <label for="resolution" class="form-label">Select Video Resolution:</label>
+                                <select class="form-select" id="resolution" name="resolution">
+                                    <option value="144p">144p</option>
+                                    <option value="240p">240p</option>
+                                    <option value="360p" checked>360p</option>
+                                    <option value="480p">480p</option>
+                                    <option value="720p">720p</option>
+                                    <option value="1080p">1080p</option>
+                                </select>
+                            </div>
                             <small class="text-danger" id="errorText" style="display: none;">Please enter a valid
                                 YouTube video URL.</small>
                         </div>
