@@ -1,39 +1,60 @@
-# app.py
+import threading
+from flask import Flask, render_template, request, send_file
+from pytube import YouTube
 import re
 import os
-from flask import Flask, render_template, request, redirect
-from pytube import YouTube
+import schedule
+import time
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('home.html')
+    return render_template('index.html')
 
 @app.route('/download', methods=['POST'])
 def download():
-    video_url = request.form['video_url']
     try:
+        video_url = request.form.get('video_url')
+        new_directory = 'downloads'
+        os.makedirs(new_directory, exist_ok=True)
+
         yt = YouTube(video_url)
-        stream = yt.streams.get_highest_resolution()
+        video_stream = yt.streams.get_highest_resolution()
 
-        # Sanitize the video title and limit its length to 100 characters
-        title = sanitize_filename(yt.title)[:100]
+        # Clean up the video title using regex
+        cleaned_title = re.sub(r'[^\w\s-]', '', yt.title)
+        cleaned_title = re.sub(r'\s+', '-', cleaned_title)
 
-        # Adjust the download path to the 'downloads' folder
-        download_path = os.path.join("downloads", f"{title}.mp4")
-        stream.download(output_path="downloads", filename=title)
+        filename = cleaned_title + '.mp4'
+        video_stream.download(output_path=new_directory, filename=filename)
 
-        return redirect('/')
+        # Send the file as an attachment
+        response = send_file(os.path.join(new_directory, filename), as_attachment=True)
+
+        # Schedule the deletion of the downloaded video after 10 minutes
+        schedule.every(10).minutes.do(delete_video, filename)
+
+        return response
     except Exception as e:
-        return f"Error: {e}"
+        return str(e)
 
-def sanitize_filename(filename):
-    # Remove characters that are not allowed in filenames
-    # For example, on Windows, characters like '\', '/', ':', '*', '?', '"', '<', '>', '|'
-    return re.sub(r'[\\/:*?"<>|]', '', filename)
+def delete_video(filename):
+    downloads_dir = 'downloads'
+    file_path = os.path.join(downloads_dir, filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"Deleted {filename}")
+    else:
+        pass
+
+def schedule_cleanup():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 if __name__ == '__main__':
-    # Create the 'downloads' folder if it doesn't exist
-    os.makedirs("downloads", exist_ok=True)
     app.run(debug=True)
+    schedule_thread = threading.Thread(target=schedule_cleanup)
+    schedule_thread.start()
